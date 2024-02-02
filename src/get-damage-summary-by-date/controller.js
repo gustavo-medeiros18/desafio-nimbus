@@ -16,56 +16,46 @@ module.exports = {
   async execute(dateStart, dateEnd) {
     const dbAlerts = await repository.execute(dateStart, dateEnd);
 
-    const dateSummary = {};
-    const totalDamageByDate = {};
-    const maxDamageEventByDate = {};
-    const minDamageEventByDate = {};
+    const dates = dbAlerts.reduce(
+      (result, alert) => {
+        const formattedDate = formatDate(alert.date);
 
-    dbAlerts.forEach((alert) => {
-      alert.date = formatDate(alert.date);
-
-      if (dateSummary[alert.date]) {
-        dateSummary[alert.date]++;
-        totalDamageByDate[alert.date] += alert.damage;
+        result.dateSummary[formattedDate] = (result.dateSummary[formattedDate] || 0) + 1;
+        result.totalDamageByDate[formattedDate] =
+          (result.totalDamageByDate[formattedDate] || 0) + alert.damage;
 
         if (
-          alert.damage >
-          (maxDamageEventByDate[alert.date] ? maxDamageEventByDate[alert.date].damage : 0)
+          !result.maxDamageEventByDate[formattedDate] ||
+          alert.damage > result.maxDamageEventByDate[formattedDate].damage
         ) {
-          maxDamageEventByDate[alert.date] = { event: alert.event, damage: alert.damage };
+          result.maxDamageEventByDate[formattedDate] = { event: alert.event, damage: alert.damage };
         }
 
         if (
-          alert.damage <
-          (minDamageEventByDate[alert.date] ? minDamageEventByDate[alert.date].damage : Infinity)
+          !result.minDamageEventByDate[formattedDate] ||
+          alert.damage < result.minDamageEventByDate[formattedDate].damage
         ) {
-          minDamageEventByDate[alert.date] = { event: alert.event, damage: alert.damage };
+          result.minDamageEventByDate[formattedDate] = { event: alert.event, damage: alert.damage };
         }
-      } else {
-        dateSummary[alert.date] = 1;
-        totalDamageByDate[alert.date] = alert.damage;
-        maxDamageEventByDate[alert.date] = { event: alert.event, damage: alert.damage };
-        minDamageEventByDate[alert.date] = { event: alert.event, damage: alert.damage };
+
+        return result;
+      },
+      {
+        dateSummary: {},
+        totalDamageByDate: {},
+        maxDamageEventByDate: {},
+        minDamageEventByDate: {},
       }
-    });
+    );
 
-    const result = {
-      data: [],
-    };
+    dates.data = Object.keys(dates.dateSummary).map((date) => ({
+      date,
+      avgDamage: Math.floor(dates.totalDamageByDate[date] / dates.dateSummary[date]),
+      maxDamageEvent: dates.maxDamageEventByDate[date],
+      minDamageEvent: dates.minDamageEventByDate[date],
+    }));
 
-    for (const date in dateSummary) {
-      const averageDamage = totalDamageByDate[date] / dateSummary[date];
-      const roundedAverageDamage = Math.floor(averageDamage);
-
-      result.data.push({
-        date: date,
-        avgDamage: roundedAverageDamage,
-        maxDamageEvent: maxDamageEventByDate[date],
-        minDamageEvent: minDamageEventByDate[date],
-      });
-    }
-
-    return result;
+    return { data: dates.data };
 
     // return dbAlerts
     //   .reduce((result, alert) => {
