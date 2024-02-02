@@ -1,5 +1,17 @@
 const repository = require("./repository");
 
+function formatDate(date) {
+  const dateObject = new Date(date);
+
+  const year = dateObject.getUTCFullYear();
+  const month = String(dateObject.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(dateObject.getUTCDate()).padStart(2, "0");
+
+  const formattedDateString = `${year}-${month}-${day}`;
+
+  return formattedDateString;
+}
+
 module.exports = {
   async execute(dateStart, dateEnd) {
     const dbAlerts = await repository.execute(dateStart, dateEnd);
