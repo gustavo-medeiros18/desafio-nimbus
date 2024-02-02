@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 module.exports = {
-  execute: async function () {
+  execute: async function (dateStart, dateEnd) {
     const connection = mysql.createConnection({
       host: process.env.MYSQL_HOST,
       user: process.env.MYSQL_USER,
@@ -22,7 +22,9 @@ module.exports = {
     });
 
     return new Promise((resolve, reject) => {
-      connection.query("SELECT * FROM alerts", (err, results) => {
+      const sqlStatement = "SELECT * FROM alerts WHERE date BETWEEN ? AND ?";
+
+      connection.query(sqlStatement, [dateStart, dateEnd], (err, results) => {
         if (err) {
           console.error("Error querying MySQL database:", err);
 
