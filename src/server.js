@@ -4,8 +4,13 @@ const getDamageSummaryByDateRoute = require("./get-damage-summary-by-date/route"
 
 const server = express();
 
-server.get("/", async (req, res) => {
-  res.status(200).json(await getDamageSummaryByDateRoute.fn());
+server.get(getDamageSummaryByDateRoute.path, async (req, res) => {
+  const dateStart = req.query.dateStart;
+  const dateEnd = req.query.dateEnd;
+
+  const results = await getDamageSummaryByDateRoute.fn(dateStart, dateEnd);
+
+  res.status(200).json(results);
 });
 
 module.exports = server;
