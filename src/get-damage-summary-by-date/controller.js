@@ -1,10 +1,10 @@
 const repository = require("./repository");
 
 module.exports = {
-  async execute() {
-    const dbAlerts = await repository.execute();
+  async execute(dateStart, dateEnd) {
+    const dbAlerts = await repository.execute(dateStart, dateEnd);
 
-    return dbAlerts
+    return dbAlerts;
 
     // return dbAlerts
     //   .reduce((result, alert) => {
