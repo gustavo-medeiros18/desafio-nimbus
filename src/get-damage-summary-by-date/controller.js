@@ -18,6 +18,8 @@ module.exports = {
 
     const dateSummary = {};
     const totalDamageByDate = {};
+    const maxDamageEventByDate = {};
+    const minDamageEventByDate = {};
 
     dbAlerts.forEach((alert) => {
       alert.date = formatDate(alert.date);
@@ -25,9 +27,25 @@ module.exports = {
       if (dateSummary[alert.date]) {
         dateSummary[alert.date]++;
         totalDamageByDate[alert.date] += alert.damage;
+
+        if (
+          alert.damage >
+          (maxDamageEventByDate[alert.date] ? maxDamageEventByDate[alert.date].damage : 0)
+        ) {
+          maxDamageEventByDate[alert.date] = { event: alert.event, damage: alert.damage };
+        }
+
+        if (
+          alert.damage <
+          (minDamageEventByDate[alert.date] ? minDamageEventByDate[alert.date].damage : Infinity)
+        ) {
+          minDamageEventByDate[alert.date] = { event: alert.event, damage: alert.damage };
+        }
       } else {
         dateSummary[alert.date] = 1;
         totalDamageByDate[alert.date] = alert.damage;
+        maxDamageEventByDate[alert.date] = { event: alert.event, damage: alert.damage };
+        minDamageEventByDate[alert.date] = { event: alert.event, damage: alert.damage };
       }
     });
 
@@ -42,6 +60,8 @@ module.exports = {
       result.data.push({
         date: date,
         avgDamage: roundedAverageDamage,
+        maxDamageEvent: maxDamageEventByDate[date],
+        minDamageEvent: minDamageEventByDate[date],
       });
     }
 
