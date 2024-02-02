@@ -16,15 +16,18 @@ module.exports = {
   async execute(dateStart, dateEnd) {
     const dbAlerts = await repository.execute(dateStart, dateEnd);
 
-    const countByDate = {};
+    const dateSummary = {};
+    const totalDamageByDate = {};
 
     dbAlerts.forEach((alert) => {
       alert.date = formatDate(alert.date);
 
-      if (countByDate[alert.date]) {
-        countByDate[alert.date]++;
+      if (dateSummary[alert.date]) {
+        dateSummary[alert.date]++;
+        totalDamageByDate[alert.date] += alert.damage;
       } else {
-        countByDate[alert.date] = 1;
+        dateSummary[alert.date] = 1;
+        totalDamageByDate[alert.date] = alert.damage;
       }
     });
 
@@ -32,8 +35,14 @@ module.exports = {
       data: [],
     };
 
-    for (const date in countByDate) {
-      result.data.push({ date: date, count: countByDate[date] });
+    for (const date in dateSummary) {
+      const averageDamage = totalDamageByDate[date] / dateSummary[date];
+      const roundedAverageDamage = Math.floor(averageDamage);
+
+      result.data.push({
+        date: date,
+        avgDamage: roundedAverageDamage,
+      });
     }
 
     return result;
