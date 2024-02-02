@@ -16,7 +16,27 @@ module.exports = {
   async execute(dateStart, dateEnd) {
     const dbAlerts = await repository.execute(dateStart, dateEnd);
 
-    return dbAlerts;
+    const countByDate = {};
+
+    dbAlerts.forEach((alert) => {
+      alert.date = formatDate(alert.date);
+
+      if (countByDate[alert.date]) {
+        countByDate[alert.date]++;
+      } else {
+        countByDate[alert.date] = 1;
+      }
+    });
+
+    const result = {
+      data: [],
+    };
+
+    for (const date in countByDate) {
+      result.data.push({ date: date, count: countByDate[date] });
+    }
+
+    return result;
 
     // return dbAlerts
     //   .reduce((result, alert) => {
