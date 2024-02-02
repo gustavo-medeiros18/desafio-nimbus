@@ -21,20 +21,17 @@ module.exports = {
       console.log("Connected to MySQL database");
     });
 
-    connection.query("SELECT * FROM alerts", (err, results, fields) => {
-      if (err) {
-        console.error("Error querying MySQL database:", err);
-        return;
-      }
-      console.log("Results from MySQL database:", results);
-    });
+    return new Promise((resolve, reject) => {
+      connection.query("SELECT * FROM alerts", (err, results) => {
+        if (err) {
+          console.error("Error querying MySQL database:", err);
 
-    connection.end((err) => {
-      if (err) {
-        console.error("Error disconnecting from MySQL database:", err);
-        return;
-      }
-      console.log("Disconnected from MySQL database");
+          reject(err);
+          return;
+        }
+
+        resolve(results);
+      });
     });
   },
 };
