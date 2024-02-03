@@ -55,7 +55,9 @@ module.exports = {
       minDamageEvent: alerts.minDamageEventByDate[date],
     }));
 
-    return { data: dates.data };
+    // Ordena o array de alertas resultante por data, em ordem
+    // descrescente. Da mais recente para a mais antiga.
+    alerts.data.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     return { data: alerts.data };
   },
