@@ -29,9 +29,12 @@ module.exports = {
           console.error("Error querying MySQL database:", err);
 
           reject(err);
+
+          connection.end();
           return;
         }
 
+        connection.end();
         resolve(results);
       });
     });
