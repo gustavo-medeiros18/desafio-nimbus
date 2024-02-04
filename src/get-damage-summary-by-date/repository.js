@@ -1,18 +1,29 @@
-const { getConnection } = require("./connection");
+const { Pool } = require("pg");
+const dotenv = require("dotenv");
+const { getConnection } = require("./database/connection");
+
+dotenv.config();
 
 module.exports = {
-  execute: async function (dateStart, dateEnd) {
-    const database = getConnection();
+  getAlertsBetweenDates: async function (startDate, endDate) {
+    const pool = getConnection();
 
-    return new Promise((resolve, reject) => {
-      const sqlStatement = "SELECT * FROM alerts WHERE date BETWEEN ? AND ?";
+    try {
+      const query = {
+        text: `
+          SELECT *
+          FROM public.alerts
+          WHERE "date" BETWEEN $1 AND $2
+        `,
+        values: [startDate, endDate],
+      };
 
-      database.query(sqlStatement, [dateStart, dateEnd], (error, results) => {
-        if (error) reject(error);
-
-        database.end();
-        resolve(results);
-      });
-    });
+      const result = await pool.query(query);
+      return result.rows;
+    } catch (error) {
+      throw new Error("Error executing query:", error);
+    } finally {
+      await pool.end();
+    }
   },
 };
