@@ -1,5 +1,5 @@
 /* Módulo de acesso ao banco de dados */
-const repository = require("./repository");
+const { getAlertsBetweenDates } = require("./repository");
 
 /* Funções auxiliares para formatar e validar datas */
 const formatDate = require("./utils/formatDate");
@@ -20,7 +20,7 @@ module.exports = {
       throw new Error("dateStart must be less than or equal to dateEnd.");
 
     /* Consulta ao repositório de dados de alerta com as datas fornecidas */
-    const dbAlerts = await repository.execute(dateStart, dateEnd);
+    const dbAlerts = await getAlertsBetweenDates(dateStart, dateEnd);
 
     /* Objeto com os resumos de alertas de data */
     const alerts = dbAlerts.reduce(
