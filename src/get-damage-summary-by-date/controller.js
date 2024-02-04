@@ -14,6 +14,12 @@ function formatDate(date) {
 
 module.exports = {
   async execute(dateStart, dateEnd) {
+    if (!dateStart || !dateEnd)
+      throw new Error("Both dateStart and dateEnd query params are required.");
+
+    if (new Date(dateStart) > new Date(dateEnd))
+      throw new Error("dateStart must be less than or equal to dateEnd.");
+
     const dbAlerts = await repository.execute(dateStart, dateEnd);
 
     const alerts = dbAlerts.reduce(
