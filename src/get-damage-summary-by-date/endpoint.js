@@ -6,8 +6,12 @@ module.exports = {
     const dateStart = req.query.dateStart;
     const dateEnd = req.query.dateEnd;
 
-    const alerts = await controller.execute(dateStart, dateEnd);
+    try {
+      const alerts = await controller.execute(dateStart, dateEnd);
 
-    res.status(200).json(alerts);
+      res.status(200).json(alerts);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
   },
 };
