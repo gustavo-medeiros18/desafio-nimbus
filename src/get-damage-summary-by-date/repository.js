@@ -1,4 +1,3 @@
-const { Pool } = require("pg");
 const dotenv = require("dotenv");
 const { getConnection } = require("./database/connection");
 
