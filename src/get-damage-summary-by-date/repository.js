@@ -13,26 +13,15 @@ module.exports = {
       port: process.env.MYSQL_PORT,
     });
 
-    connection.connect((err) => {
-      if (err) {
-        console.error("Error connecting to MySQL database:", err);
-        return;
-      }
-      console.log("Connected to MySQL database");
+    connection.connect((error) => {
+      if (error) throw new Error("Error connecting to MySQL database:", error);
     });
 
     return new Promise((resolve, reject) => {
       const sqlStatement = "SELECT * FROM alerts WHERE date BETWEEN ? AND ?";
 
-      connection.query(sqlStatement, [dateStart, dateEnd], (err, results) => {
-        if (err) {
-          console.error("Error querying MySQL database:", err);
-
-          reject(err);
-
-          connection.end();
-          return;
-        }
+      connection.query(sqlStatement, [dateStart, dateEnd], (error, results) => {
+        if (error) reject(error);
 
         connection.end();
         resolve(results);
