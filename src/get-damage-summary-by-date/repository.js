@@ -1,7 +1,4 @@
-const dotenv = require("dotenv");
 const { getConnection } = require("./database/connection");
-
-dotenv.config();
 
 module.exports = {
   getAlertsBetweenDates: async function (startDate, endDate) {
