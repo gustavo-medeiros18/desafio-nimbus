@@ -1,8 +1,9 @@
+const { Query } = require("pg");
 const { getConnection } = require("./database/connection");
 
 module.exports = {
   getAlertsBetweenDates: async function (startDate, endDate) {
-    const pool = getConnection();
+    const client = getConnection();
 
     try {
       const query = {
@@ -14,12 +15,12 @@ module.exports = {
         values: [startDate, endDate],
       };
 
-      const result = await pool.query(query);
+      const result = await client.query(query);
       return result.rows;
     } catch (error) {
       throw new Error("Error executing query:", error);
     } finally {
-      await pool.end();
+      await client.end();
     }
   },
 };
