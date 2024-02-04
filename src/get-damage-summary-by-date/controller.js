@@ -1,29 +1,8 @@
 const repository = require("./repository");
 
-function isValidDate(dateString) {
-  const regex = /^\d{4}-\d{2}-\d{2}$/;
-  if (!regex.test(dateString)) return false;
-
-  const [year, month, day] = dateString.split("-").map(Number);
-  const dateObject = new Date(year, month - 1, day);
-  return (
-    dateObject.getFullYear() === year &&
-    dateObject.getMonth() + 1 === month &&
-    dateObject.getDate() === day
-  );
-}
-
-function formatDate(date) {
-  const dateObject = new Date(date);
-
-  const year = dateObject.getUTCFullYear();
-  const month = String(dateObject.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(dateObject.getUTCDate()).padStart(2, "0");
-
-  const formattedDateString = `${year}-${month}-${day}`;
-
-  return formattedDateString;
-}
+/* Funções auxiliares para formatar e validar datas */
+const formatDate = require("./utils/formatDate");
+const isValidDate = require("./utils/isValidDate");
 
 module.exports = {
   async execute(dateStart, dateEnd) {
