@@ -23,9 +23,12 @@ npm i
 npm run start
 ```
 
+Rodando tanto pelo docker como localmente, a aplicação ficará disponível para requisições normalmente,
+com o endpoint exigido no enunciado.
+
 ### Executando os testes unirários
 
-Para executar os testes unitários, recomenda-se **rodar a aplicação localmente**, pois devido a latência do banco de dados quando dockerizado, os testes podem falhar, visto que o jest não espera por muito tempo a resposta do banco de dados.
+Na execução de testes unirários, a aplicação usará um banco de dados local (**sqlite**) em **ambiente de teste**, devido a latência do Postgres quando dockerizado.
 
 Comando para testar:
 

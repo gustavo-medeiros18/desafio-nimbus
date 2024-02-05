@@ -17,7 +17,10 @@ module.exports = {
 
     /* Validação: se a data de início é menor ou igual à data de fim */
     if (new Date(dateStart) > new Date(dateEnd))
-      throw new Error("dateStart must be less than or equal to dateEnd.");
+      throw new Error("dateStart must be less to dateEnd.");
+
+    /* Validação: se data de início for igual a data de fim */
+    if (dateStart === dateEnd) throw new Error("dateStart must be different to dateEnd.");
 
     /* Consulta ao repositório de dados de alerta com as datas fornecidas */
     const dbAlerts = await getAlertsBetweenDates(dateStart, dateEnd);

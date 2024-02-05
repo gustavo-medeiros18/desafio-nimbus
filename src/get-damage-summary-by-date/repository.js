@@ -6,21 +6,13 @@ module.exports = {
     const client = getConnection();
 
     try {
-      const query = {
-        text: `
-          SELECT *
-          FROM public.alerts
-          WHERE "date" BETWEEN $1 AND $2
-        `,
-        values: [startDate, endDate],
-      };
+      const result = await client("alerts").whereBetween("date", [startDate, endDate]);
 
-      const result = await client.query(query);
-      return result.rows;
+      return result;
     } catch (error) {
       throw new Error("Error executing query:", error);
     } finally {
-      await client.end();
+      await client.destroy();
     }
   },
 };
