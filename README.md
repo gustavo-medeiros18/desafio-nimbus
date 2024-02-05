@@ -1,7 +1,8 @@
 ## Como rodar a aplicação
 
 Primeiro, crie um arquivo `.env` na raiz do projeto com os atributos presentes em `.env.example`.
-Em seguida, insira os valores desejados para cada variável de ambiente.
+Em seguida, insira os valores desejados para cada variável de ambiente. Certifique-se de inserir portas
+que não estejam ocupadas na sua máquina.
 
 ### Executando pelo docker compose
 
@@ -13,7 +14,7 @@ docker-compose up
 
 ### Executando localmente
 
-> É necessário ter o PostgreSQL e o NodeJS instalados na máquina.
+> É necessário ter o PostgreSQL e o NodeJS instalados na máquina. A estrutura presente em `schema.sql` será criada dentro do banco padrão `postgres`.
 
 Execute a seguinte sequência de comandos a partir da raiz do projeto:
 
