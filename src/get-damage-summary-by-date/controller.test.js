@@ -65,5 +65,26 @@ describe("Controller Tests", () => {
         "Both dateStart and dateEnd must be in the format 'yyyy-mm-dd'."
       );
     });
+
+    it("should throw an error if dateStart and dateEnd are not provided", async () => {
+      await expect(controller.execute()).rejects.toThrow(
+        "Both dateStart and dateEnd query params are required."
+      );
+    });
+
+    it("should return correct results when dateStart equals dateEnd", async () => {
+      const dateStart = "2014-01-01";
+      const dateEnd = "2014-01-01";
+
+      const result = await controller.execute(dateStart, dateEnd);
+
+      expect(result).toHaveProperty("data");
+      expect(Array.isArray(result.data)).toBe(true);
+      expect(result.data.length).toBe(1);
+      expect(result.data[0]).toHaveProperty("date", dateStart);
+      expect(result.data[0]).toHaveProperty("avgDamage", 0);
+      expect(result.data[0]).toHaveProperty("maxDamageEvent", null);
+      expect(result.data[0]).toHaveProperty("minDamageEvent", null);
+    });
   });
 });
