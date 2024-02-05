@@ -1,87 +1,37 @@
-## Teste técnico para Backend da Nimbus
+## Como rodar a aplicação
 
-### Cenário
+Primeiro, crie um arquivo `.env` na raiz do projeto com os atributos presentes em `.env.example`.
+Em seguida, insira os valores desejados para cada variável de ambiente.
 
-A Nimbus foi contratada para gerir alertas baseados na previsão climática de uma região. O alerta deve informar o evento (quantidade de chuva ou velocidade do vento, por exemplo) e o nível do impacto do evento na operação da contratante nessa região.
+### Executando pelo docker compose
 
-Abaixo será descrito um dos casos de uso da aplicação que devemos desenvolver.
+Com isso, execute o seguinte comando a partir da raiz do projeto:
 
-### Descrição do Caso de Uso `GetDamageSummaryByDate`
-
-A cada quinzena, a contratante fará um relatório com um resumo diário de impactos na região. Nesse resumo deve constar, para cada dia:
-- Média de impacto na operação
-- Evento de maior impacto
-- Evento de menor impacto
-
-Sendo assim, deve-se disponibilizar um endpoint na nossa aplicação que retorne essas informações baseadas em todos os eventos ocorridos dentro de um período estipulado. Esse resultado deve ser ordenado por data em ordem decrescente.
-
-Exemplo da requisição:
-
-`GET /damage-summary-by-date?dateStart=dateStart=2023-12-22&dateEnd=2024-01-05`
-
-Resposta:
-
-```json
-{
-    "data": [
-        {
-            "date": "2024-01-05",
-            "avgDamage": 68,
-            "maxDamageEvent": {
-                "event": "Pancada de chuva",
-                "damage": 82
-            },
-            "minDamageEvent": {
-                "event": "Chuva 12 mm",
-                "damage": 59
-            }
-        },
-        {
-            "date": "2024-01-04",
-            "avgDamage": 58,
-            "maxDamageEvent": {
-                "event": "Vento 9 m/s",
-                "damage": 73
-            },
-            "minDamageEvent": {
-                "event": "Ocorrência de raios a 17 km",
-                "damage": 48
-            }
-        },
-        {
-            "date": "2024-01-03",
-            "avgDamage": 0,
-            "maxDamageEvent": null,
-            "minDamageEvent": null
-        },
-        ...
-    ]
-}
-
+```bash
+docker-compose up
 ```
 
-### Instruções
+### Executando localmente
 
-Uma pessoa na equipe criou a regra de negócio para o caso de uso. Porém, há bugs na implementação.
+> É necessário ter o PostgreSQL e o NodeJS instalados na máquina.
 
-Sua função é:
-- Implementar o endpoint para o caso de uso
-- Corrigir os bugs na regra de negócio
+Execute a seguinte sequência de comandos a partir da raiz do projeto:
 
-Na pasta do projeto estão disponíveis arquivos de base para a implementação. O arquivo `src/get-damage-summary-by-date/controller.js` possui o código da regra de negócio, e o arquivo `src/get-damage-summary-by-date/controller.test.js` deve ser utilizado para criar os testes unitários da regra.
+```bash
+psql -h localhost -U <seu_usuario> -a -f scripts/schema.sql
+npm i
+npm run start
+```
 
-Não há obrigatoriedade de uso de ferramentas específicas, mas você deve utilizar ferramentas (à sua escolha) para os seguintes módulos:
-- Tratamento de requisições http
-- Acesso e criação do banco de dados
-- Testes unitários
+Rodando tanto pelo docker como localmente, a aplicação ficará disponível para requisições normalmente,
+com o endpoint exigido no enunciado.
 
-No arquivo `data/alerts.json` está uma lista de alertas para utilizar como teste. Crie a tabela de alertas, de acordo com o formato das entidades presentes no arquivo, e preencha com esses alertas. Deve-se disponibilizar, junto à solução, todos os arquivos e códigos necessários para o setup do banco de dados.
+### Executando os testes unirários
 
-O arquivo `src/get-damage-summary-by-date/request.http` possui um exemplo de requisição que será feita para o endpoint que será implementado.
+Na execução de testes unirários, a aplicação usará um banco de dados local (**sqlite**) em **ambiente de teste**, devido a latência do Postgres quando dockerizado.
 
-### Atenção!
+Comando para testar:
 
-Quem vai revisar a solução deve rodar, no MÁXIMO, 3 comandos para testar a solução em um primeiro momento:
-- Setup do banco de dados
-- Rodar a aplicação (npm install && npm start)
-- Executar a requisição para o endpoint
+```bash
+npm run test
+```
